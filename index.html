@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Photo API</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+        color: #2c343e;
+      }
+      body {
+        text-align: center;
+      }
+      .top-container {
+        height: 500px;
+        padding: 10% 0;
+        background: url("https://images.pexels.com/photos/1054218/pexels-photo-1054218.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200");
+      }
+      .main-title {
+        width: 40%;
+        margin: 0 auto;
+      }
+      #search-bar {
+        width: 40%;
+        height: 50px;
+        margin: 30px 0;
+        border: 1px solid;
+        border-radius: 10px;
+      }
+      h1,
+      h2 {
+        text-align: left;
+      }
+      h1 {
+        color: white;
+      }
+      h2 {
+        padding: 100px 0px 20px 10px;
+      }
+      .images-container {
+        padding: 30px;
+      }
+      #photos-Div {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+      }
+      .photo-Div {
+        width: 33%;
+        margin-bottom: 30px;
+      }
+      img {
+        width: 90%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="top-container">
+      <div class="main-title">
+        <h1>
+          The best free stock photos, royalty free images & videos shared by
+          creators.
+        </h1>
+      </div>
+      <form id="search-form">
+        <input id="search-bar" type="text" placeholder="search for photos" />
+      </form>
+    </div>
+    <div class="images-container">
+      <h2>Free Stock Photos</h2>
+      <div id="photos-Div"></div>
+    </div>
+    <script>
+      let topContainer = document.getElementsByClassName("top-container")[0];
+      topContainer.style.background = `linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.9)) url("./elonmusk-cover.jpeg") center/cover no-repeat`;
+
+      let searchForm = document.querySelector("#search-form");
+      searchForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+          if (this.readyState == 4 && this.status == 200) {
+            // Typical action to be performed when the document is ready:
+
+            let res = JSON.parse(xhttp.responseText);
+            //   console.log(res);
+            let photosDiv = document.querySelector("#photos-Div");
+
+            let photos = res.photos;
+            photosDiv.innerHTML = "";
+
+            photos.forEach((photo, i) => {
+              console.log(photo);
+              let topContainer =
+                document.getElementsByClassName("top-container")[0];
+              if (i === 0) {
+                topContainer.style.background = `url("${photo.src.landscape}") center/cover no-repeat`;
+              } else {
+                let photoDiv = document.createElement("div");
+                photoDiv.classList.add("photo-Div");
+                photoDiv.innerHTML = `<img src=${photo.src.portrait}>`;
+
+                photosDiv.appendChild(photoDiv);
+              }
+            });
+          }
+        };
+        let queryValue = document.querySelector("#search-bar").value;
+        xhttp.open(
+          "GET",
+          `https://api.pexels.com/v1/search?query=${queryValue}&per_page=7`,
+          true
+        );
+        xhttp.setRequestHeader(
+          "Authorization",
+          "563492ad6f917000010000010968fb29a1d248fbb81100710a3f2ee4"
+        );
+        xhttp.send();
+      });
+    </script>
+  </body>
+</html>
